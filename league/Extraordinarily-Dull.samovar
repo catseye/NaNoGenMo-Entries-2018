@@ -1,0 +1,930 @@
+//
+// Samovar description for: The League of Extraordinarily Dull Gentlemen
+// Submitted to NaNoGenMo 2018
+// by Chris Pressey, Cat's Eye Technologies
+//
+
+// ------------------------ COMMON RULES ------------------------
+
+scenario Rules {
+  [actor(?A),item(?I),unheld(?I)]                   ?A picked up the ?I. [holding(?A,?I),!unheld(?I)]
+  [actor(?A),item(?I),holding(?A,?I),!keeps(?A,?I)] ?A put down the ?I.  [!holding(?A,?I),unheld(?I)]
+
+  [actor(?A),item(?I),holding(?A,?I),drink(?I),!allocated(?I)]      ?A took a sip of the ?I. [allocated(?I),allocated-to(?A,?I)]
+  [actor(?A),item(?I),holding(?A,?I),drink(?I),allocated-to(?A,?I)] ?A took a sip of the ?I. [allocated(?I),allocated-to(?A,?I)]
+
+  [actor(?A),item(?I),readable(?I),holding(?A,?I)] ?A read the ?I. [has-read(?A,?I)]
+
+  [actor(?A),!sitting(?A),environs(?R)]       ?A walked around the ?R.   []
+  [actor(?A),!sitting(?A),seat(?S),empty(?S)] ?A sat down on the ?S.     [sitting(?A),sitting-on(?A,?S),!empty(?S)]
+  [actor(?A),sitting(?A),sitting-on(?A,?S)]   ?A leaned back in the ?S.  []
+  [actor(?A),sitting(?A),sitting-on(?A,?S)]   ?A got up and stretched.   [!sitting(?A),!sitting-on(?A,?S),empty(?S)]
+
+  [actor(?A)]  ?A coughed.  []
+  [actor(?A)]  ?A rubbed his chin.  []
+  [actor(?A) where ?A=Throgmorton]  ?A brushed some dust off his coat sleeve.  []
+  [actor(?A) where ?A=Scurthorpe]   ?A adjusted his monocle.  []
+  [actor(?A) where ?A=Pranehurst]   ?A wrinkled his nose.  []
+  [actor(?A) where ?A=Furze-Platt]  ?A rubbed his wrist.  []
+
+  [actor(?A),actor(?B)]  ?A looked at ?B.  []
+  [actor(?A),actor(?B)]  ?A nodded to ?B.  []
+
+  [actor(?A),fenestration(?P)]  ?A looked out the ?P.  []
+
+  [actor(?A),!sitting(?A),prop(?P),!near(?A)]  ?A walked over to the ?P.    [near(?A),near-to(?A,?P)]
+  [actor(?A),near-to(?A,?P)]                   ?A examined the ?P closely.  []
+  [actor(?A),!sitting(?A),near-to(?A,?P)]      ?A walked away from the ?P.  [!near(?A),!near-to(?A,?P)]
+
+  [prop(?P),!described(?P)]               Nearby there was a ?P.  [described(?P)]
+  [prop(?P),!described(?P),environs(?R)]  In the corner of the ?R there was a ?P.  [described(?P)]
+
+  [actor(?A),has-news(?A,?T),!exclaimed-has-news(?A,?T)]    ?A exclaimed, "I have news!"  [exclaimed-has-news(?A,?T)]
+  [actor(?A),exclaimed-has-news(?B,?T),!heard-news(?A,?T)]  ?A asked, "What is it, ?B?"   [been-asked-about-news(?B,?T)]
+  [actor(?A),been-asked-about-news(?A,?T),actor(?B)]        ?A told ?B of the ?T.         [heard-news(?B,?T)]
+}
+
+// ----------------------------- SETTINGS ------------------------
+
+scenario SittingRoom {
+    environs(sitting_room).
+
+    prop(bookshelf).
+    prop(window). fenestration(window).
+    prop(fireplace).
+    prop(grandfather_clock).
+    prop(leather_chair). seat(leather_chair). empty(leather_chair).
+
+    item(newspaper). readable(newspaper). unheld(newspaper).
+    item(whiskey). drink(whiskey).  unheld(whiskey).
+    item(brandy). drink(brandy).  unheld(brandy).
+    item(pocket_watch). unheld(pocket_watch).
+}
+
+scenario Library {
+    environs(library).
+
+    prop(desk).
+    prop(bookshelf).
+    prop(window). fenestration(window).
+    prop(leather_chair).  seat(leather_chair).  empty(leather_chair).
+    prop(bust_of_Cicero).
+
+    item(newspaper). readable(newspaper). unheld(newspaper).
+    item(encyclopedia). readable(encyclopedia). unheld(encyclopedia).
+    item(atlas). readable(atlas). unheld(atlas).
+}
+
+scenario GreatHall {
+    environs(Great_Hall).
+
+    prop(mantel).
+    prop(leather_couch).
+    prop(tapestry).
+    prop(suit_of_armor).
+    prop(French_window). fenestration(French_window).
+
+    seat(leather_couch).
+    empty(leather_couch).
+}
+
+scenario Conservatory {
+    environs(conservatory).
+
+    prop(grand_piano).
+    prop(azalea).
+    prop(bust_of_Beethoven).
+    prop(skylight). fenestration(skylight).
+
+    prop(leather_couch). seat(leather_couch). empty(leather_couch).
+}
+
+scenario GardenShed {
+    environs(garden_shed).
+
+    prop(workbench).
+    prop(window). fenestration(window).
+    prop(bags_of_potting_soil).
+
+    seat(bags_of_potting_soil).
+    empty(bags_of_potting_soil).
+
+    item(oilcan). unheld(oilcan).
+    item(hedge_trimmer). unheld(hedge_trimmer).
+    item(screwdriver). unheld(screwdriver).
+}
+
+scenario WineCellar {
+    environs(wine_cellar).
+
+    prop(wine_rack).
+    prop(cobwebs).
+    prop(trunk_with_brass_fittings). seat(trunk_with_brass_fittings). empty(trunk_with_brass_fittings).
+    prop(barrel).
+
+    item(bottle_of_Beaujolais). unheld(bottle_of_Beaujolais).
+    item(bottle_of_Sauvignon_blanc). unheld(bottle_of_Sauvignon_blanc).
+    item(bottle_of_port). unheld(bottle_of_port).
+}
+
+scenario BilliardsRoom {
+    environs(billiards_room).
+
+    prop(billiards_table).
+    prop(cue_rack).
+    prop(ashtray_stand).
+    prop(window). fenestration(window).
+    prop(scoreboard).
+
+    item(cue_chalk). unheld(cue_chalk).
+}
+
+scenario Riverside {
+    environs(riverside).
+
+    prop(boathouse). enterable(boathouse).
+    prop(ancient_oak_tree).
+    prop(bench). seat(bench). empty(bench).
+    prop(dock).
+
+    item(coil_of_rope). unheld(coil_of_rope).
+    item(picnic_basket). unheld(picnic_basket).
+}
+
+scenario Kitchen {
+    prop(stove).
+    prop(oven).
+    prop(sink).
+    prop(pots_and_pans).
+    prop(grimy_kitchen_window). fenestration(grimy_kitchen_window).
+
+    item(empty_kettle). unheld(empty_kettle).
+    item(empty_teapot). unheld(empty_teapot).
+    item(empty_teacup). unheld(empty_teacup).
+    item(tea_infuser). unheld(tea_infuser).
+    item(cannister_of_tea). unheld(cannister_of_tea).
+}
+
+// ------------------------ SPECIFIC RULES ------------------------
+
+scenario Searching {
+    [actor(?A),actor(?B),looking-for(?B,?I),!looking-for(?A,?I)]
+      "Why are we here, ?B?" asked ?A.
+    [questioned-why(?A,?B,?I)]
+    [actor(?A),actor(?B),questioned-why(?A,?B,?I)]
+      "This is just where I would hide a ?I if I stole one, ?A!" replied ?B.
+    [looking-for(?A,?I)]
+
+    [actor(?A),looking-for(?A,?X),prop(?P)]            ?A looked behind the ?P.                   [looked-behind(?A,?P)]
+    [actor(?A),looking-for(?A,?X),prop(?P)]            ?A bent down and looked under the ?P.      [looked-under(?A,?P)]
+    [actor(?A),looking-for(?A,?X),item(?I),unheld(?I)] ?A lifted the ?I to see what was under it. [looked-under(?A,?I)]
+}
+
+scenario BadNews {
+    [actor(?A),topic(?T),heard-news(?A,?T),bad-news(?T)] ?A was left shocked by the news of ?T. [shocked(?A)]
+
+    [actor(?A),shocked(?A)]  ?A gasped.  []
+    [actor(?A),shocked(?A)]  ?A stared blankly off into space.  []
+    [actor(?A),shocked(?A)]  ?A winced.  []
+
+    [actor(?A),shocked(?A)]  "I can't believe it," cried ?A.      [expressed-shock(?A)]
+    [actor(?A),shocked(?A)]  "This is terrible!" cried ?A.        [expressed-shock(?A)]
+    [actor(?A),shocked(?A)]  "I'm shocked!" cried ?A.             [expressed-shock(?A)]
+
+}
+
+scenario Moonlight {
+    [prop(?P),fenestration(?P),prop(?Q),!lit-up(?Q)]
+      Moonlight flooded in through the ?P and illuminated the ?Q.
+    [lit-up(?Q)]
+}
+
+scenario Sunlight {
+    [prop(?P),fenestration(?P),prop(?Q),!lit-up(?Q)]
+      The morning sunlight streamed in through the ?P, lighting up the ?Q.
+    [lit-up(?Q)]
+}
+
+scenario Theft {
+    import Moonlight.
+    [actor(?A),furtive(?A)] ?A cast a furtive glance around the room. [has-glanced(?A)]
+    [actor(?A),has-glanced(?A)] ?A was now sure no one else was about. [confident(?A)]
+    [actor(?A),confident(?A)] An owl hooted outside and ?A froze. [!confident(?A)]
+    [actor(?A),!sitting(?A),prop(?P),near-to(?A,?P),fastened(?P),confident(?A)]
+      ?A loosened the ?P from its fittings.
+    [!fastened(?P),!prop(?P),item(?P),unheld(?P)]
+    [actor(?A),confident(?A),item(?I),stealable(?I),holding(?A,?I)] ?A made off into the night. [!actor(?A),!item(?I)]
+}
+
+scenario LetterWriting {
+    item(stationery). unheld(stationery).
+    prop(inkwell_on_the_desk).
+    item(quill_pen). unheld(quill_pen).
+
+    [actor(?A),intent-to-write(?A,letter),holding(?A,quill_pen),near-to(?A,inkwell_on_the_desk)]
+      ?A dipped the quill pen in the inkwell on the desk.
+    [inky(quill_pen)]
+
+    [actor(?A),intent-to-write(?A,letter),holding(?A,quill_pen),inky(quill_pen),holding(?A,stationery),!item(letter)]
+      ?A penned a few thoughtful words on the stationery.
+    [item(letter),holding(?A,letter)]
+}
+
+scenario ReceiveLetter {
+    [!item(?I) where ?I=letter_from_old_Grisbourne]
+      "Letter for you, Throgmorton," said Crumflatter, leaving as quicky as he appeared.
+    [item(?I),unheld(?I),readable(?I)]
+
+    [has-read(?A, ?I) where ?I=letter_from_old_Grisbourne]
+      "It was good of him to write back," said ?A.
+    [announce-has-read(?A, ?I)]
+}
+
+// ----------------------------- SCENES ------------------------
+
+//
+// Introduce characters: Throgmorton, Pranehurst, Scurthorpe, and Furze-Platt
+//
+
+scenario Scene_100_intro {
+    import SittingRoom.
+    import Rules.
+
+    [actor(?A),actor(?B),!greeted(?A,?B)] "What ho, ?B!" exclaimed ?A.   [greeted(?A,?B)]
+    [actor(?A),actor(?B),!greeted(?A,?B)] "Good afternoon, ?B," said ?A. [greeted(?A,?B)]
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    [
+        actor(Pranehurst),
+        actor(Scurthorpe),
+        actor(Throgmorton),
+        actor(Furze-Platt),
+        greeted(Pranehurst, Scurthorpe),
+        greeted(Pranehurst, Throgmorton),
+        greeted(Pranehurst, Furze-Platt),
+        greeted(Scurthorpe, Pranehurst),
+        greeted(Scurthorpe, Throgmorton),
+        greeted(Scurthorpe, Furze-Platt),
+        greeted(Throgmorton, Pranehurst),
+        greeted(Throgmorton, Scurthorpe),
+        greeted(Throgmorton, Furze-Platt),
+        greeted(Furze-Platt, Pranehurst),
+        greeted(Furze-Platt, Scurthorpe),
+        greeted(Furze-Platt, Throgmorton)
+    ]
+      In short, it was an ordinary day at the Perivale Gentleman's Club.
+    [
+        greeted(all),
+        // We revoke all the actors here to make the scene end immediately with this event (more or less).
+        !actor(Pranehurst),
+        !actor(Scurthorpe),
+        !actor(Throgmorton),
+        !actor(Furze-Platt)
+    ]
+
+    goal [greeted(all)].
+}
+
+//
+// MacGuffin is stolen by a shadowy figure
+//
+
+scenario Scene_200_theft {
+    import GreatHall.
+    import Rules.
+    import Theft.
+
+    prop(silver_statuette_of_Artemis). stealable(silver_statuette_of_Artemis). fastened(silver_statuette_of_Artemis).
+    actor(the_shadowy_figure). furtive(the_shadowy_figure).
+
+    goal [!actor(the_shadowy_figure)].
+}
+
+//
+// Characters are informed that MacGuffin is stolen
+//
+
+scenario Scene_300_oh_no {
+    import SittingRoom.
+    import Rules.
+    import BadNews.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    topic(theft_of_the_statuette).
+    has-news(Scurthorpe, theft_of_the_statuette). bad-news(theft_of_the_statuette).
+
+    goal [expressed-shock(Throgmorton),expressed-shock(Pranehurst),expressed-shock(Furze-Platt)].
+}
+
+//
+// Throgmorton writes a letter to Old Grisbourne asking them what they should do
+//
+
+scenario Scene_400_letter {
+    import Library.
+    import Rules.
+    import LetterWriting.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    [!intent-to-write(?A,letter) where ?A=Throgmorton]
+      "I shall write to Old Grisbourne. He will know just what to do," said ?A.
+    [intent-to-write(?A,letter),keeps(?A,stationery),keeps(?A,quill_pen)]
+
+    [item(?I),actor(?A),holding(?A,?I) where ?I=letter]
+      "Now to send this at once!" chimed ?A.
+    [announced-send(?I)]
+
+    goal [announced-send(letter)].
+}
+
+//
+// Pranehurst announces he has misplaced his umbrella
+//
+
+scenario Scene_500_brolly_lost {
+    import SittingRoom.
+    import Rules.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    topic(fact_that_he_misplaced_his_umbrella).
+    has-news(Pranehurst, fact_that_he_misplaced_his_umbrella).
+
+    [heard-news(?A, fact_that_he_misplaced_his_umbrella)]
+      "That's a rotten shame, Pranehurst," said ?A.
+    []
+
+    goal [
+        heard-news(Throgmorton, ?T),
+        heard-news(Scurthorpe, ?T),
+        heard-news(Furze-Platt, ?T)
+        where ?T=fact_that_he_misplaced_his_umbrella
+    ].
+}
+
+//
+// A response to Throgmorton's letter arrives with questionable advice
+//
+
+scenario Scene_600_reply_letter {
+    import SittingRoom.
+    import Rules.
+    import ReceiveLetter.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+
+    goal [announce-has-read(Throgmorton, letter_from_old_Grisbourne)].
+}
+
+scenario Scene_650_filler {
+    import BilliardsRoom.
+
+    import Rules.
+
+    actor(Young_Froomhouse).
+    actor(Young_Cumberforbe).
+
+    turn(Young_Froomhouse).
+    
+    [actor(?A),turn(?A)]
+      ?A squatted and surveyed the table.
+    []
+
+    [actor(?A),turn(?A)]
+      ?A walked around the table, considering his shot.
+    []
+
+    [actor(?A),turn(?A)]
+      ?A leaned over the table with his cue, preparing his shot.
+    [preparing(?A)]
+
+    [actor(?A),turn(?A),preparing(?A)]
+      ?A hit the cue ball but it went wild and missed the red ball entirely.
+    [!preparing(?A),took-turn(?A)]
+
+    [actor(?A),turn(?A),preparing(?A)]
+      ?A hit the cue ball into the red ball but it missed the pocket by an inch.
+    [!preparing(?A),took-turn(?A)]
+
+    [actor(?A),turn(?A),preparing(?A)]
+      ?A hit the cue ball into the red ball and sank it in the corner pocket.
+    [game-won-by(?A),!turn(?A)]
+
+    [actor(?A),actor(?B),turn(?A),took-turn(?A)]
+      "Your turn, ?B," said ?A.
+    [!turn(?A),!took-turn(?A)]
+
+    [actor(?A),actor(?B),game-won-by(?B)]
+      "Good game, ?B," said ?A.
+    [game-over(billiards)]
+
+    [actor(?A),holding(?A,cue_chalk)]
+      ?A chalked his cue.
+    []
+
+    other(Pranehurst).
+    other(Scurthorpe).
+    other(Throgmorton).
+    other(Furze-Platt).
+
+    topic(statuette_gone_missing).
+
+    [actor(?A),topic(?T)] "Shame about that ?T," said ?A. [current-topic(?T)]
+
+    [current-topic(statuette_gone_missing),actor(?A),other(?O),!proposed(?O)]
+      "Do you think ?O could have taken it?" asked ?A.
+    [proposed(?O)]
+    [current-topic(statuette_gone_missing),actor(?A),other(?O),proposed(?O),!eliminated(?O)]
+      "No, it couldn't have been ?O, he'd never do something like that," concluded ?A.
+    [eliminated(?O)]
+
+    goal [eliminated(Pranehurst),eliminated(Scurthorpe),eliminated(Throgmorton),eliminated(Furze-Platt),game-over(billiards)].
+}
+
+//
+// Pranehurst and Scurthorpe look for the MacGuffin in the garden shed
+//
+
+scenario Scene_700_search_shed {
+    import GardenShed.
+    import Rules.
+    import Searching.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+
+    looking-for(Scurthorpe, silver_statuette_of_Artemis).
+
+    goal [looking-for(Pranehurst, silver_statuette_of_Artemis),sitting-on(Scurthorpe,bags_of_potting_soil)].
+}
+
+//
+// Furze-Platt accuses Throgmorton of stealing the MacGuffin
+//
+
+scenario Scene_800_accuse {
+    import SittingRoom.
+    import Rules.
+
+    [actor(?A),!calmer(?A),actor(?B),!accused(?B) where ?I=silver_statuette_of_Artemis]
+      "I think YOU stole the ?I, ?B!" shouted ?A.
+    [accused(?B),accused-by(?B,?A)]
+
+    [accused(?A),!calmer(?A),!upset(?A)]
+      "WHAT?" bellowed ?A.
+    [upset(?A)]
+
+    [upset(?B)] "Well I never!" bellowed ?B. []
+    [upset(?B)] ?B spluttered. []
+    [upset(?B)] "What rot!" bellowed ?B. []
+    [upset(?B)] "Preposterous!" bellowed ?B. []
+
+    actor(Furze-Platt).
+    actor(Throgmorton).
+    offstage(Crumflatter).
+    calmer(Crumflatter).
+
+    [upset(Furze-Platt),upset(Throgmorton),offstage(?A),environs(?R)]
+      ?A walked into the ?R.
+    [!offstage(?A),actor(?A)]
+
+    [actor(?A),calmer(?A),actor(?B),upset(?B)]
+      "Now, now, ?B, get ahold of yourself," said ?A.
+    [!upset(?B)]
+
+    [actor(Crumflatter),!upset(Furze-Platt),!upset(Throgmorton)]
+      "That's better," said Crumflatter.
+    []
+
+    goal [actor(Crumflatter),!upset(Furze-Platt),!upset(Throgmorton)].
+}
+
+//
+// Pranehurst and Scurthorpe look for the MacGuffin in the wine cellar and find a diary instead
+//
+
+scenario Scene_900_search_wine_cellar {
+    import WineCellar.
+    import Rules.
+    import Searching.
+
+    hidden(diary).
+
+    [questioned-why(?A,?B,?X),looking-for(?A,?X),actor(?A),prop(?P),hidden(?I),!item(?I)]
+      ?A looked under the ?P and found a ?I.
+    [item(?I),unheld(?I),!hidden(?I)]
+
+    [actor(?A),item(?I),holding(?A,?I),!found(?I) where ?I=diary]
+      "Hello! What's this?" exclaimed ?A holding up the ?I.
+    [found(?I),seen-by(?A,?I)]
+
+    [actor(?A),item(?I),found(?I),holding(?A,?I),actor(?B)]
+      ?A showed the ?I to ?B.
+    [seen-by(?B,?I)]
+
+    [actor(?A),item(?I),!holding(?A,?I),seen-by(?A,?I),actor(?B),seen-by(?B,?I) where ?I=diary]
+      "Whose do you suppose it is, ?B?" asked ?A pointing at the diary.
+    [questioned-whose(?A,diary)]
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    looking-for(Scurthorpe, silver_statuette_of_Artemis).
+
+    goal [questioned-whose(Pranehurst, diary)].
+}
+
+//
+// Pranehurst and Scurthorpe take the diary to the library and read it - it's Furze-Platt's
+//
+
+scenario Scene_1000_read_diary {
+    import SittingRoom.
+    import Rules.
+
+    item(diary). readable(diary). juicy(diary).
+    holding(Scurthorpe, diary).
+
+    [actor(?A),item(?I),readable(?I),juicy(?I),holding(?A,?I),actor(?B)]
+      "Listen to this, ?B!" said ?A as he related some of the contents of the ?I.
+    [has-heard-from(?B,?I)]
+
+    [actor(?A),item(?I),has-heard-from(?A,?I)]
+      ?A was dumbstruck by what he heard from the ?I.
+    [has-reacted-to(?A,?I)]
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+
+    goal [has-read(Scurthorpe,diary),has-reacted-to(Scurthorpe,diary),
+          has-read(Pranehurst,diary),has-reacted-to(Pranehurst,diary),
+          holding(Pranehurst, diary)].
+}
+
+//
+// Furze-Platt tries to make tea
+//
+
+scenario Scene_1100_tea {
+    import Rules.
+    import Kitchen.
+    import Moonlight.
+
+    actor(Furze-Platt).
+
+    [near-to(?A,sink),holding(?A,empty_kettle)]
+      ?A filled the kettle.
+    [!item(empty_kettle),!holding(?A,empty_kettle),item(full_kettle),holding(?A,full_kettle)]
+
+    [near-to(?A,stove),holding(?A,full_kettle)]
+      ?A put the kettle on the stove.
+    [!item(full_kettle),!holding(?A,full_kettle),prop(kettle_on_the_stove)]
+
+    [prop(kettle_on_the_stove)]
+      The kettle on the stove began to boil.
+    [!prop(kettle_on_the_stove),item(boiling_kettle),unheld(boiling_kettle)]
+
+    [actor(?A),holding(?A,empty_teapot),holding(?A,boiling_kettle)]
+      ?A poured the boiling water into the teapot.
+    [!item(empty_teapot),!holding(?A,empty_teapot),!item(boiling_kettle),!holding(?A,boiling_kettle),
+     item(full_teapot),holding(?A,full_teapot)]
+
+    [actor(?A),holding(?A,full_teapot),holding(?A,tea_infuser)]
+      ?A dangled the tea infuser in the teapot and let it steep.
+    [!item(full_teapot),!holding(?A,full_teapot),!item(tea_infuser),!holding(?A,tea_infuser),
+     item(teapot_full_of_tea),holding(?A,teapot_full_of_tea)]
+
+    [actor(?A),holding(?A,teapot_full_of_tea),holding(?A,empty_teacup)]
+      ?A poured himself some tea.
+    [!item(empty_teacup),!holding(?A,empty_teacup),
+     item(cup_of_tea),holding(?A,cup_of_tea),drink(cup_of_tea),!actor(?A)]
+
+    goal [holding(Furze-Platt,cup_of_tea)].
+}
+
+//
+// Furze-platt overhears Pranehurst and Scurthorpe talking about the diary
+//
+
+scenario Scene_1200_overhear {
+    import SittingRoom.
+    import Rules.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    offstage(Furze-Platt).
+
+    [offstage(?A),actor(?B)] ?A stood in the shadows, unseen by ?B. [unseen-by(?A,?B)].
+    [actor(?A),actor(?B),topic(?T)] ?A discussed ?T with ?B. [discussed(?T)].
+
+    [offstage(?A),unseen-by(?A,Pranehurst),unseen-by(?A,Scurthorpe),discussed(?T)]
+      ?A heard them talking about ?T.
+    [alerted(?A,?T)].
+
+    topic(what_to_do_with_the_diary).
+    item(diary). holding(Scurthorpe, diary).
+
+    goal [alerted(Furze-Platt,what_to_do_with_the_diary), holding(Scurthorpe,diary)].
+}
+
+//
+// Scurthorpe hides the diary in the grand piano
+//
+
+scenario Scene_1300_hide_diary {
+    import Conservatory.
+    import Rules.
+
+    item(diary). holding(Scurthorpe,diary). hideable(diary).
+
+    container(grand_piano). open(grand_piano).
+
+    [actor(?A),item(?I),hideable(?I),holding(?A,?I),prop(?P),container(?P),open(?P)]
+      ?A hid the ?I in the ?P.
+    [!item(?I),!holding(?A,?I),hidden_in(?I,?P)]
+
+    actor(Scurthorpe).
+    actor(Pranehurst).
+
+    goal [hidden_in(diary,grand_piano)].
+}
+
+//
+// Diary is stolen by a shadowy figure
+//
+
+scenario Scene_1400_diary_stolen {
+    import Conservatory.
+    import Rules.
+    import Searching.
+    import Theft.
+
+    actor(the_shadowy_figure). furtive(the_shadowy_figure).
+    looking-for(the_shadowy_figure, diary).
+
+    [actor(?A),
+     looked-under(?A,grand_piano),
+     looked-under(?A,azalea),
+     looked-under(?A,bust_of_Beethoven),
+     looked-under(?A,leather_couch)]
+      ?A began to look frustrated.
+    [looked-everywhere(?A)]
+
+    hidden(diary). stealable(diary).
+
+    [actor(?A),looked-everywhere(?A),prop(?P),hidden(?I),!item(?I)]
+      ?A looked inside the ?P and found a ?I.
+    [item(?I),unheld(?I),!hidden(?I),!looked-everywhere(?A)]
+
+    goal [!actor(the_shadowy_figure)].
+}
+
+//
+// Scurthorpe and Pranehurst look for the diary the next morning but it is gone
+//
+
+scenario Scene_1500_diary_missing {
+    import Conservatory.
+    import Rules.
+    import BadNews.
+    import Sunlight.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+
+    offstage(Crumflatter).
+    calmer(Crumflatter).
+
+    topic(diary_has_been_taken). bad-news(diary_has_been_taken).
+
+    [actor(?A),prop(?P),!looked-in(?P) where ?P=grand_piano]
+      ?A looked in the ?P and gasped.
+    [looked-in(?P),has-news(?A, diary_has_been_taken),heard-news(?A, diary_has_been_taken),shocked(?A)]
+
+    [shocked(Scurthorpe),shocked(Pranehurst),offstage(?A),environs(?R)]
+      ?A walked into the ?R.
+    [!offstage(?A),actor(?A)]
+
+    goal [shocked(Scurthorpe),shocked(Pranehurst),actor(Crumflatter)].
+}
+
+//
+// Scurthorpe and Pranehurst invite Furze-Platt to go boating
+//
+
+scenario Scene_1600_lets_go_boating {
+    import SittingRoom.
+    import Rules.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    [!invited(Furze-Platt)]
+      "Say, Furze-Platt, Scurthorpe and I are going boating tomorrow. Would you like to join us?"
+    [invited-by(Furze-Platt, Scurthorpe)]
+
+    [actor(?A),invited-by(?A,?B)]
+      ?A considered the invitation.
+    []
+
+    [actor(?A),invited-by(?A,?B)]
+      "Certainly, ?B! It sounds a right spot of fun," articulated ?A.
+    [accepted-invitation(?A)]
+
+    goal [accepted-invitation(Furze-Platt)].
+}
+
+//
+// Pranehurst and Furze-Platt disappear inside the boathouse; when they emerge there is an understanding
+//
+
+scenario Scene_1700_boathouse {
+    import Riverside.
+    import Rules.
+
+    [actor(?A),prop(?P),enterable(?P)] ?A went inside the ?P. [inside(?A,?P),!actor(?A)]
+    [inside(?A,?P),!actor(?A)]         ?A came out of the ?P. [!inside(?A,?P),actor(?A)]
+
+    [prop(?P),enterable(?P),inside(?A,?P),guilty(?A),inside(?B,?P),!guilty(?B)]
+      The sound of voices could be heard from inside the ?P.
+    [caught-out(?A),caught-out-by(?A,?B)]
+
+    [actor(?A),actor(?B),caught-out-by(?A,?B)]
+      ?A and ?B exchanged an ominous look.
+    [received-ominous-look(?A)]
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Furze-Platt).
+    guilty(Furze-Platt).
+
+    goal [actor(Furze-Platt),received-ominous-look(Furze-Platt)].
+}
+
+//
+// Throgmorton writes another letter to Old Grimsbourne asking them what they should do
+//
+
+scenario Scene_1800_another_letter {
+    import Library.
+    import Rules.
+    import LetterWriting.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    [!intent-to-write(?A,letter) where ?A=Throgmorton]
+      "I shall write to Old Grisbourne. He will know just what to do," said ?A.
+    [intent-to-write(?A,letter),keeps(?A,stationery),keeps(?A,quill_pen)]
+
+    [item(?I),actor(?A),holding(?A,?I) where ?I=letter]
+      "Now to send this at once!" chimed ?A.
+    [announced-send(?I)]
+
+    goal [announced-send(letter)].
+}
+
+//
+// Diary is burned by a shadowy figure who is revealed to be Furze-Platt
+//
+
+scenario Scene_1900_burn_diary {
+    import SittingRoom.
+    import Rules.
+
+    container(fireplace). open(fireplace).
+    item(matches). unheld(matches).
+    item(iron_poker). unheld(iron_poker).
+
+    actor(the_shadowy_figure). furtive(the_shadowy_figure).
+
+    item(diary). holding(the_shadowy_figure, diary).
+
+    [actor(?A),holding(?A,matches),!item(?I) where ?I=match]
+      ?A lit a ?I.
+    [item(?I),holding(?A,?I)]
+
+    [actor(?A),item(?I),holding(?A,?I) where ?I=match]
+      The ?I went out.
+    [!item(?I),!holding(?A,?I)]
+
+    [actor(?A),prop(?P),open(?P),!lit(?P),near-to(?A,?P),holding(?A,match)]
+      ?A lit a fire in the ?P.
+    [lit(?P)]
+
+    [actor(?A),prop(?P),open(?P),near-to(?A,?P),holding(?A,?I) where ?I=diary]
+      ?A put the ?I in the ?P.
+    [!holding(?A,?I),hidden-in(?P,?I)]
+
+    [item(?I),hidden-in(fireplace,?I),lit(fireplace) where ?I=diary]
+      The fire reduced the ?I to ashes.
+    [!item(?I),item(ashes)]
+
+    [actor(?A),lit(?P),near-to(?A,?P),holding(?A,iron_poker),item(ashes) where ?P=fireplace]
+      ?A poked the ashes with the poker.
+    [!item(ashes),hidden-in(?P,ashes)]
+
+    [actor(?A),hidden-in(fireplace,ashes),!revealed-to-be(the_shadowy_figure,Furze-Platt)]
+      ?A stepped into the moonlight and the features of Furze-Platt were clearly visible.
+    [revealed-to-be(the_shadowy_figure,Furze-Platt)]
+
+    goal [revealed-to-be(the_shadowy_figure,Furze-Platt)].
+}
+
+//
+// The next morning, the MacGuffin is returned
+//
+
+scenario Scene_2000_returned {
+    import GreatHall.
+    import Rules.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    prop(silver_statuette_of_Artemis).
+
+    topic(return_of_the_statuette).
+    has-news(Scurthorpe, return_of_the_statuette).
+
+    goal [heard-news(Throgmorton, ?T),
+          heard-news(Pranehurst, ?T),
+          heard-news(Furze-Platt, ?T) where ?T=return_of_the_statuette].
+}
+
+//
+// Throgmorton explains that he is suffering from somnambulism and kleptomania and that he found the MacGuffin in his nightstand
+//
+
+scenario Scene_2100_denoument {
+    import SittingRoom.
+    import Rules.
+    import ReceiveLetter.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    [actor(Throgmorton) where ?I=statuette]
+      "I found the ?I in my nightstand, you see," explained Throgmorton.
+    [explained1(Throgmorton)]
+
+    [actor(Throgmorton)]
+      "My doctor says my somnambulism is improving daily!" chirped Throgmorton.
+    [explained2(Throgmorton)]
+
+    [actor(Throgmorton)]
+      "My doctor is concerned I may be coming down with a touch of the kleptomania," warbled Throgmorton.
+    [explained3(Throgmorton)]
+
+    goal [
+        announce-has-read(Throgmorton, letter_from_old_Grisbourne),
+        explained1(Throgmorton),
+        explained2(Throgmorton),
+        explained3(Throgmorton)
+    ].
+}
+
+//
+// Pranehurst shows everyone his new umbrella
+//
+
+scenario Scene_2200_coda {
+    import SittingRoom.
+    import Rules.
+
+    actor(Pranehurst).
+    actor(Scurthorpe).
+    actor(Throgmorton).
+    actor(Furze-Platt).
+
+    item(his_new_umbrella). holding(Pranehurst, his_new_umbrella).
+
+    [actor(?A),holding(?A,?I),actor(?B)] ?A showed ?B the ?I. [has-been-showed(?B,?I)]
+
+    goal [has-been-showed(Scurthorpe,his_new_umbrella),has-been-showed(Throgmorton,his_new_umbrella),
+          has-been-showed(Furze-Platt,his_new_umbrella)].
+}
