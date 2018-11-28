@@ -293,7 +293,7 @@ function main()
     
     “Ah, but they haven't counted on our modular decompiler zero-day...”
     
-    <center>_THE END(?)_</center>
+    ##### THE END(?) #####
     """)
 end
 
