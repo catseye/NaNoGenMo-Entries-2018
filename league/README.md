@@ -1,7 +1,5 @@
 # The League of Extraordinarily Dull Gentlemen
 
-[Back to Top](../)
-
 ### Goals
 
 * **To tell a single story over the course of 50,000 words.**
