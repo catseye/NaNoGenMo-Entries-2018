@@ -7,19 +7,19 @@ for [NaNoGenMo 2018][].
 ### The League of Extraordinarily Dull Gentlemen
 
 Novel: [The League of Extraordinarily Dull Gentlemen.md](generated/The%20League%20of%20Extraordinarily%20Dull%20Gentlemen.md)  
-Code: [available here](league/), written in [Samovar][] 0.2 and Python
+Code: [available here](league/), written in [Samovar][] 0.2 and Python  
 Issue: [#6](https://github.com/NaNoGenMo/2018/issues/6)
 
 ### The Defeat at Procyon V
 
 Novel: [The Defeat at Procyon V.md](generated/The%20Defeat%20at%20Procyon%20V.md)  
-Code: [available here](defeat/), written in [Julia][] 1.0
+Code: [available here](defeat/), written in [Julia][] 1.0  
 Issue: [#83](https://github.com/NaNoGenMo/2018/issues/83)
 
 ### ETERLAN SEPTEBMER
 
 Novel: [ETERLAN SEPTEBMER.md](generated/ETERLAN%20SEPTEBMER.md)  
-Code: [available here](eterlan/), written in [Befunge-93][]
+Code: [available here](eterlan/), written in [Befunge-93][]  
 Issue: [#91](https://github.com/NaNoGenMo/2018/issues/91)
 
 [Cat's Eye Technologies]: http://catseye.tc/
